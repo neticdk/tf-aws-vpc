@@ -8,7 +8,7 @@ Terraform 0.12
 
 ```hcl
 module "vpc" {
-  source = ""
+  source = "github.com/neticdk/tf-aws-vpc"
 
   name = "my-vpc"
   cidr = "10.0.0.0/16"
