@@ -88,13 +88,16 @@ If `enabled_s3_endpoint` is `true`, the following resources are created:
 | cidr\_block | The CIDR block for the VPC | string | `"null"` | no |
 | enable\_dns\_hostnames | Should be true to enable DNS hostnames in the VPC | string | `"false"` | no |
 | enable\_dns\_support | Should be true to enable DNS support in the VPC | string | `"true"` | no |
+| enable\_nat\_gateway | Create NAT gateway(s) in public subnets | bool | `"true"` | no |
 | enable\_s3\_endpoint | Should be true if you want to provision an S3 endpoint to the VPC | string | `"false"` | no |
+| external\_nat\_ip\_ids | List of EIP IDs to be assigned to the NAT Gateways (used in combination with reuse_nat_ips) | list(string) | `<list>` | no |
 | igw\_tags | Additional tags for the internet gateway | map | `<map>` | no |
 | instance\_tenancy | A tenancy option for instances launched into the VPC | string | `"null"` | no |
 | map\_public\_ip\_on\_launch | Should be false if you do not want to auto-assign public IP on launch | string | `"true"` | no |
 | name | Name to be used on all the resources as identifier | string | `""` | no |
 | nat\_eip\_tags | Additional tags for the NAT EIP | map | `<map>` | no |
 | nat\_gateway\_tags | Additional tags for the NAT gateways | map | `<map>` | no |
+| one\_nat\_gateway\_per\_az | Use one NAT gateway in each availability zone specified in availability_zone_names | bool | `"true"` | no |
 | private\_route\_table\_tags | Additional tags for the private route tables | map | `<map>` | no |
 | private\_subnet\_suffix | Suffix to privateend to private subnets name | string | `"private"` | no |
 | private\_subnet\_tags | Additional tags for the private subnets | map | `<map>` | no |
@@ -108,6 +111,8 @@ If `enabled_s3_endpoint` is `true`, the following resources are created:
 | public\_subnet\_suffix | Suffix to append to public subnets name | string | `"public"` | no |
 | public\_subnet\_tags | Additional tags for the public subnets | map | `<map>` | no |
 | public\_subnets | A list of public subnets inside the VPC | list | `<list>` | no |
+| reuse\_nat\_ips | Should be true if you don't want EIPs to be created for your NAT Gateways and will instead pass them in via the 'external_nat_ip_ids' variable | bool | `"false"` | no |
+| single\_nat\_gateway | Use a single NAT gateway for all private subnets. Will be placed on the subnet in public_subnets. | bool | `"false"` | no |
 | tags | A map of tags to add to all resources | map | `<map>` | no |
 | vpc\_tags | Additional tags for the VPC | map | `<map>` | no |
 
