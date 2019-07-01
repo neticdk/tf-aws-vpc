@@ -9,6 +9,8 @@ locals {
   tags = {
     Terraform = "true"
   }
+
+  nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.availability_zone_names) : length(var.private_subnets)
 }
 
 // VPC
@@ -75,7 +77,7 @@ resource "aws_route" "public_internet_gateway" {
 
 // Private Routes
 resource "aws_route_table" "private" {
-  count = length(var.private_subnets) > 0 ? length(var.availability_zone_names) : 0
+  count = length(var.private_subnets) > 0 ? local.nat_gateway_count : 0
 
   vpc_id = aws_vpc.this.id
 
@@ -115,7 +117,7 @@ resource "aws_route_table" "protected" {
 
 // Public Subnets
 resource "aws_subnet" "public" {
-  count = length(var.public_subnets) > 0 && length(var.public_subnets) >= length(var.availability_zone_names) ? length(var.public_subnets) : 0
+  count = length(var.public_subnets) > 0 && (false == var.one_nat_gateway_per_az || length(var.public_subnets) >= length(var.availability_zone_names)) ? length(var.public_subnets) : 0
 
   vpc_id                  = aws_vpc.this.id
   cidr_block              = element(concat(var.public_subnets, [""]), count.index)
@@ -138,7 +140,7 @@ resource "aws_subnet" "public" {
 
 // Private Subnets
 resource "aws_subnet" "private" {
-  count = length(var.private_subnets) > 0 && lengt(var.private_subnets) >= length(var.availability_zone_names) ? length(var.private_subnets) : 0
+  count = length(var.private_subnets) > 0 ? length(var.private_subnets) : 0
 
   vpc_id            = aws_vpc.this.id
   cidr_block        = var.private_subnets[count.index]
@@ -160,7 +162,7 @@ resource "aws_subnet" "private" {
 
 // Protected Subnets
 resource "aws_subnet" "protected" {
-  count = length(var.protected_subnets) > 0 && length(var.protected_subnets) >= length(var.availability_zone_names) ? length(var.protected_subnets) : 0
+  count = length(var.protected_subnets) > 0 ? length(var.protected_subnets) : 0
 
   vpc_id            = aws_vpc.this.id
   cidr_block        = var.protected_subnets[count.index]
@@ -181,8 +183,15 @@ resource "aws_subnet" "protected" {
 }
 
 // NAT Gateways - Elastic IPs
+locals {
+  nat_gateway_ips = split(
+    ",",
+    var.reuse_nat_ips ? join(",", var.external_nat_ip_ids) : join(",", aws_eip.nat.*.id),
+  )
+}
+
 resource "aws_eip" "nat" {
-  count = length(var.public_subnets) > 0 && length(var.public_subnets) >= length(var.availability_zone_names) ? length(var.public_subnets) : 0
+  count = var.enable_nat_gateway && false == var.reuse_nat_ips ? local.nat_gateway_count : 0
 
   vpc = true
 
@@ -191,7 +200,7 @@ resource "aws_eip" "nat" {
       "Name" = format(
         "%s-%s",
         var.name,
-        element(var.availability_zone_names, count.index),
+        element(var.availability_zone_names, var.single_nat_gateway ? 0 : count.index),
       )
     },
     var.tags,
@@ -200,23 +209,19 @@ resource "aws_eip" "nat" {
   )
 }
 
-locals {
-  nat_gateway_ips = split(",", join(",", aws_eip.nat[*].id))
-}
-
 // NAT Gateways (placed in public subnets)
 resource "aws_nat_gateway" "this" {
-  count = length(var.public_subnets) > 0 && length(var.public_subnets) >= length(var.availability_zone_names) ? length(var.public_subnets) : 0
+  count = var.enable_nat_gateway ? local.nat_gateway_count : 0
 
-  allocation_id = element(local.nat_gateway_ips, count.index)
-  subnet_id     = element(aws_subnet.public[*].id, count.index)
+  allocation_id = element(local.nat_gateway_ips, var.single_nat_gateway ? 0 : count.index)
+  subnet_id     = element(aws_subnet.public[*].id, var.single_nat_gateway ? 0 : count.index)
 
   tags = merge(
     {
       "Name" = format(
         "%s-%s",
         var.name,
-        element(var.availability_zone_names, count.index),
+        element(var.availability_zone_names, var.single_nat_gateway ? 0 : count.index),
       )
     },
     var.tags,
@@ -229,7 +234,7 @@ resource "aws_nat_gateway" "this" {
 
 // NAT Gateway Routes for private subnets
 resource "aws_route" "private_nat_gateway" {
-  count = length(var.private_subnets) > 0 && length(var.private_subnets) >= length(var.availability_zone_names) ? length(var.private_subnets) : 0
+  count = var.enable_nat_gateway ? local.nat_gateway_count : 0
 
   route_table_id         = element(aws_route_table.private[*].id, count.index)
   destination_cidr_block = "0.0.0.0/0"
@@ -253,7 +258,7 @@ resource "aws_route_table_association" "private" {
   count = length(var.private_subnets) > 0 ? length(var.private_subnets) : 0
 
   subnet_id      = element(aws_subnet.private[*].id, count.index)
-  route_table_id = element(aws_route_table.private[*].id, count.index)
+  route_table_id = element(aws_route_table.private[*].id, var.single_nat_gateway ? 0 : count.index)
 }
 
 // Route Table Association - protected
@@ -281,14 +286,14 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_vpc_endpoint_route_table_association" "public_s3" {
   count = var.enable_s3_endpoint && length(var.public_subnets) > 0 ? 1 : 0
 
-  vpc_endpoint_id = aws_vpc_endpoint.s3[count.index].id
+  vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
   route_table_id  = aws_route_table.public[count.index].id
 }
 
 
 resource "aws_vpc_endpoint_route_table_association" "private_s3" {
-  count = var.enable_s3_endpoint ? length(var.private_subnets) : 0
+  count = var.enable_s3_endpoint ? local.nat_gateway_count : 0
 
-  vpc_endpoint_id = element(tolist(aws_vpc_endpoint.s3[*].id), count.index)
+  vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
   route_table_id  = element(aws_route_table.private[*].id, count.index)
 }

@@ -107,9 +107,39 @@ variable "protected_route_table_tags" {
   default     = {}
 }
 
+variable "single_nat_gateway" {
+  description = "Use a single NAT gateway for all private subnets. Will be placed on the subnet in public_subnets."
+  type        = bool
+  default     = false
+}
+
+variable "enable_nat_gateway" {
+  description = "Create NAT gateway(s) in public subnets"
+  type        = bool
+  default     = true
+}
+
+variable "one_nat_gateway_per_az" {
+  description = "Use one NAT gateway in each availability zone specified in availability_zone_names"
+  type        = bool
+  default     = true
+}
+
 variable "nat_gateway_tags" {
   description = "Additional tags for the NAT gateways"
   default     = {}
+}
+
+variable "reuse_nat_ips" {
+  description = "Should be true if you don't want EIPs to be created for your NAT Gateways and will instead pass them in via the 'external_nat_ip_ids' variable"
+  type        = bool
+  default     = false
+}
+
+variable "external_nat_ip_ids" {
+  description = "List of EIP IDs to be assigned to the NAT Gateways (used in combination with reuse_nat_ips)"
+  type        = list(string)
+  default     = []
 }
 
 variable "nat_eip_tags" {
