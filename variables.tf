@@ -172,3 +172,7 @@ variable "enable_s3_endpoint" {
   default     = false
 }
 
+variable "enable_dynamodb_endpoint" {
+  description = "Should be true if you want to provision a DynamoDB endpoint to the VPC"
+  default     = false
+}
