@@ -297,3 +297,32 @@ resource "aws_vpc_endpoint_route_table_association" "private_s3" {
   vpc_endpoint_id = aws_vpc_endpoint.s3[0].id
   route_table_id  = element(aws_route_table.private[*].id, count.index)
 }
+
+// DynamoDB VPC Endpoints for private and public
+data "aws_vpc_endpoint_service" "dynamodb" {
+  count = var.enable_dynamodb_endpoint ? 1 : 0
+
+  service = "dynamodb"
+}
+
+resource "aws_vpc_endpoint" "dynamodb" {
+  count = var.enable_dynamodb_endpoint ? 1 : 0
+
+  vpc_id       = aws_vpc.this.id
+  service_name = data.aws_vpc_endpoint_service.dynamodb[0].service_name
+}
+
+resource "aws_vpc_endpoint_route_table_association" "public_dynamodb" {
+  count = var.enable_dynamodb_endpoint && length(var.public_subnets) > 0 ? 1 : 0
+
+  vpc_endpoint_id = aws_vpc_endpoint.dynamodb[0].id
+  route_table_id  = aws_route_table.public[count.index].id
+}
+
+
+resource "aws_vpc_endpoint_route_table_association" "private_dynamodb" {
+  count = var.enable_dynamodb_endpoint ? local.nat_gateway_count : 0
+
+  vpc_endpoint_id = aws_vpc_endpoint.dynamodb[0].id
+  route_table_id  = element(aws_route_table.private[*].id, count.index)
+}

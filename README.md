@@ -90,6 +90,7 @@ If `enabled_s3_endpoint` is `true`, the following resources are created:
 | enable\_dns\_support | Should be true to enable DNS support in the VPC | string | `"true"` | no |
 | enable\_nat\_gateway | Create NAT gateway(s) in public subnets | bool | `"true"` | no |
 | enable\_s3\_endpoint | Should be true if you want to provision an S3 endpoint to the VPC | string | `"false"` | no |
+| enable\_dynamodb\_endpoint | Should be true if you want to provision a DynamoDB endpoint to the VPC | string | `"false"` | no |
 | external\_nat\_ip\_ids | List of EIP IDs to be assigned to the NAT Gateways (used in combination with reuse_nat_ips) | list(string) | `<list>` | no |
 | igw\_tags | Additional tags for the internet gateway | map | `<map>` | no |
 | instance\_tenancy | A tenancy option for instances launched into the VPC | string | `"null"` | no |
