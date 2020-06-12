@@ -34,3 +34,18 @@ output "protected_subnets" {
   description = "The protected subnets"
   value       = aws_subnet.protected[*].id
 }
+
+output "private_route_table_ids" {
+  description = "Route tables for private subnets"
+  value = aws_route_table.private[*].id
+}
+
+output "public_route_table_ids" {
+  description = "Route tables for public subnets"
+  value = aws_route_table.public[*].id
+}
+
+output "protected_route_table_ids" {
+  description = "Route tables for protected subnets"
+  value = aws_route_table.protected[*].id
+}

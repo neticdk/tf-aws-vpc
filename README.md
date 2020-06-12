@@ -126,6 +126,9 @@ If `enabled_s3_endpoint` is `true`, the following resources are created:
 | vpc\_arn | Amazon Resource Name (ARN) of VPC |
 | vpc\_cidr\_block | The CIDR block of the VPC |
 | vpc\_id | The ID of the VPC |
+| private\_route\_table\_ids | Route table ids for private subnets |
+| public\_route\_table\_ids | Route table ids for public subnets |
+| protected\_route\_table\_ids | Route table ids for protected subnets |
 
 <!---END OF PRE-COMMIT-TERRAFORM DOCS HOOK--->
 
