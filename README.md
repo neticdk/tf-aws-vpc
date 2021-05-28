@@ -11,11 +11,11 @@ module "vpc" {
   source = "github.com/neticdk/tf-aws-vpc"
 
   name = "my-vpc"
-  cidr = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/16"
 
   availability_zone_names = [ "eu-west-1a",    "eu-west-1b",    "eu-west-1c"    ]
   private_subnets         = [ "10.0.0.0/19",   "10.0.32.0/19",  "10.0.64.0/19"  ]
-  protected_subnets       = [ "10.0.128.0/21", "10.0.136.0/21", "10.0.244.0/21" ]
+  protected_subnets       = [ "10.0.128.0/21", "10.0.136.0/21", "10.0.240.0/21" ]
   public_subnets          = [ "10.0.160.0/21", "10.0.168.0/21", "10.0.176.0/21" ]
 
   enable_dns_support      = true
