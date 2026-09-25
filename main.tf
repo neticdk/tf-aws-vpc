@@ -186,14 +186,14 @@ resource "aws_subnet" "protected" {
 locals {
   nat_gateway_ips = split(
     ",",
-    var.reuse_nat_ips ? join(",", var.external_nat_ip_ids) : join(",", aws_eip.nat.*.id),
+    var.reuse_nat_ips ? join(",", var.external_nat_ip_ids) : join(",", aws_eip.nat[*].id),
   )
 }
 
 resource "aws_eip" "nat" {
   count = var.enable_nat_gateway && false == var.reuse_nat_ips ? local.nat_gateway_count : 0
 
-  vpc = true
+  domain = "vpc"
 
   tags = merge(
     {
