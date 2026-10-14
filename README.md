@@ -2,13 +2,13 @@
 
 ## Supported Terraform Versions
 
-Terraform 0.12
+Terraform >= 1.15, AWS provider ~> 6.0
 
 ## Usage
 
 ```hcl
 module "vpc" {
-  source = "github.com/neticdk/tf-aws-vpc"
+  source = "github.com/neticdk/tf-aws-vpc?ref=v2.0.0"
 
   name = "my-vpc"
   cidr_block = "10.0.0.0/16"
@@ -83,39 +83,39 @@ If `enabled_s3_endpoint` is `true`, the following resources are created:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| assign\_generated\_ipv6\_cidr\_block | Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC | string | `"false"` | no |
-| availability\_zone\_names | A list of availability zone names in which resources will be created | list | `<list>` | no |
+| assign\_generated\_ipv6\_cidr\_block | Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC | bool | `"false"` | no |
+| availability\_zone\_names | A list of availability zone names in which resources will be created | list(string) | `<list>` | no |
 | cidr\_block | The CIDR block for the VPC | string | `"null"` | no |
-| enable\_dns\_hostnames | Should be true to enable DNS hostnames in the VPC | string | `"false"` | no |
-| enable\_dns\_support | Should be true to enable DNS support in the VPC | string | `"true"` | no |
+| enable\_dns\_hostnames | Should be true to enable DNS hostnames in the VPC | bool | `"false"` | no |
+| enable\_dns\_support | Should be true to enable DNS support in the VPC | bool | `"true"` | no |
 | enable\_nat\_gateway | Create NAT gateway(s) in public subnets | bool | `"true"` | no |
-| enable\_s3\_endpoint | Should be true if you want to provision an S3 endpoint to the VPC | string | `"false"` | no |
-| enable\_dynamodb\_endpoint | Should be true if you want to provision a DynamoDB endpoint to the VPC | string | `"false"` | no |
+| enable\_s3\_endpoint | Should be true if you want to provision an S3 endpoint to the VPC | bool | `"false"` | no |
+| enable\_dynamodb\_endpoint | Should be true if you want to provision a DynamoDB endpoint to the VPC | bool | `"false"` | no |
 | external\_nat\_ip\_ids | List of EIP IDs to be assigned to the NAT Gateways (used in combination with reuse_nat_ips) | list(string) | `<list>` | no |
-| igw\_tags | Additional tags for the internet gateway | map | `<map>` | no |
+| igw\_tags | Additional tags for the internet gateway | map(string) | `<map>` | no |
 | instance\_tenancy | A tenancy option for instances launched into the VPC | string | `"null"` | no |
-| map\_public\_ip\_on\_launch | Should be false if you do not want to auto-assign public IP on launch | string | `"true"` | no |
+| map\_public\_ip\_on\_launch | Should be false if you do not want to auto-assign public IP on launch | bool | `"true"` | no |
 | name | Name to be used on all the resources as identifier | string | `""` | no |
-| nat\_eip\_tags | Additional tags for the NAT EIP | map | `<map>` | no |
-| nat\_gateway\_tags | Additional tags for the NAT gateways | map | `<map>` | no |
+| nat\_eip\_tags | Additional tags for the NAT EIP | map(string) | `<map>` | no |
+| nat\_gateway\_tags | Additional tags for the NAT gateways | map(string) | `<map>` | no |
 | one\_nat\_gateway\_per\_az | Use one NAT gateway in each availability zone specified in availability_zone_names | bool | `"true"` | no |
-| private\_route\_table\_tags | Additional tags for the private route tables | map | `<map>` | no |
+| private\_route\_table\_tags | Additional tags for the private route tables | map(string) | `<map>` | no |
 | private\_subnet\_suffix | Suffix to privateend to private subnets name | string | `"private"` | no |
-| private\_subnet\_tags | Additional tags for the private subnets | map | `<map>` | no |
-| private\_subnets | A list of private subnets inside the VPC | list | `<list>` | no |
-| protected\_route\_table\_tags | Additional tags for the protected route tables | map | `<map>` | no |
+| private\_subnet\_tags | Additional tags for the private subnets | map(string) | `<map>` | no |
+| private\_subnets | A list of private subnets inside the VPC | list(string) | `<list>` | no |
+| protected\_route\_table\_tags | Additional tags for the protected route tables | map(string) | `<map>` | no |
 | protected\_subnet\_group\_tags | Additional tags for the protected subnet group | map | `<map>` | no |
 | protected\_subnet\_suffix | Suffix to append to protected subnets name | string | `"protected"` | no |
-| protected\_subnet\_tags | Additional tags for the protected subnets | map | `<map>` | no |
-| protected\_subnets | A list of protected subnets inside the VPC | list | `<list>` | no |
-| public\_route\_table\_tags | Additional tags for the public route tables | map | `<map>` | no |
+| protected\_subnet\_tags | Additional tags for the protected subnets | map(string) | `<map>` | no |
+| protected\_subnets | A list of protected subnets inside the VPC | list(string) | `<list>` | no |
+| public\_route\_table\_tags | Additional tags for the public route tables | map(string) | `<map>` | no |
 | public\_subnet\_suffix | Suffix to append to public subnets name | string | `"public"` | no |
-| public\_subnet\_tags | Additional tags for the public subnets | map | `<map>` | no |
-| public\_subnets | A list of public subnets inside the VPC | list | `<list>` | no |
+| public\_subnet\_tags | Additional tags for the public subnets | map(string) | `<map>` | no |
+| public\_subnets | A list of public subnets inside the VPC | list(string) | `<list>` | no |
 | reuse\_nat\_ips | Should be true if you don't want EIPs to be created for your NAT Gateways and will instead pass them in via the 'external_nat_ip_ids' variable | bool | `"false"` | no |
 | single\_nat\_gateway | Use a single NAT gateway for all private subnets. Will be placed on the subnet in public_subnets. | bool | `"false"` | no |
-| tags | A map of tags to add to all resources | map | `<map>` | no |
-| vpc\_tags | Additional tags for the VPC | map | `<map>` | no |
+| tags | A map of tags to add to all resources | map(string) | `<map>` | no |
+| vpc\_tags | Additional tags for the VPC | map(string) | `<map>` | no |
 
 ## Outputs
 
