@@ -7,7 +7,7 @@
 
 variable "tags" {
   description = "A map of tags to add to all resources"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
@@ -73,49 +73,49 @@ variable "protected_subnets" {
 
 variable "vpc_tags" {
   description = "Additional tags for the VPC"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "igw_tags" {
   description = "Additional tags for the internet gateway"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "public_subnet_tags" {
   description = "Additional tags for the public subnets"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "private_subnet_tags" {
   description = "Additional tags for the private subnets"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "protected_subnet_tags" {
   description = "Additional tags for the protected subnets"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "public_route_table_tags" {
   description = "Additional tags for the public route tables"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "private_route_table_tags" {
   description = "Additional tags for the private route tables"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
 variable "protected_route_table_tags" {
   description = "Additional tags for the protected route tables"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
@@ -139,7 +139,7 @@ variable "one_nat_gateway_per_az" {
 
 variable "nat_gateway_tags" {
   description = "Additional tags for the NAT gateways"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
@@ -157,7 +157,7 @@ variable "external_nat_ip_ids" {
 
 variable "nat_eip_tags" {
   description = "Additional tags for the NAT EIP"
-  type        = map
+  type        = map(string)
   default     = {}
 }
 
